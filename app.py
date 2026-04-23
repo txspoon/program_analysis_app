@@ -14,7 +14,7 @@ if "gcp_json_raw" in st.secrets:
         creds = service_account.Credentials.from_service_account_info(creds_dict)
         
         # 2. Vertex AIの初期化
-        vertexai.init(project=creds_dict["project_id"], location="us-central1", credentials=creds)
+        vertexai.init(project=creds_dict["project_id"], location="asia-central1", credentials=creds)
         
         st.success("✅ Google Cloudへの認証に成功しました！")
         
