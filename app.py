@@ -4,31 +4,32 @@ from google.oauth2 import service_account
 from vertexai.generative_models import GenerativeModel
 import vertexai
 
-st.title("🚀 Gemini 接続テスト")
+st.title("🚀 Gemini 再接続テスト")
 
-# 1. 金庫（Secrets）から鍵を取り出す
 if "gcp_json_raw" in st.secrets:
     try:
-        # 文字列として保存したJSONを解析
         creds_dict = json.loads(st.secrets["gcp_json_raw"])
         creds = service_account.Credentials.from_service_account_info(creds_dict)
         
-        # 2. Vertex AIの初期化
-        vertexai.init(project=creds_dict["project_id"], location="asia-central1", credentials=creds)
+        # リージョンを us-central1 に変更してテスト
+        vertexai.init(project=creds_dict["project_id"], location="us-central1", credentials=creds)
         
-        st.success("✅ Google Cloudへの認証に成功しました！")
+        st.success(f"✅ プロジェクト '{creds_dict['project_id']}' への認証は成功しました")
         
         if st.button("Geminiを呼んでみる"):
-            with st.spinner("Geminiが考え中..."):
-                # 3. Gemini 1.5 Flashモデルを呼び出し
-                model = GenerativeModel("gemini-1.5-flash")
-                response = model.generate_content("こんにちは！テレビ東京の視聴率分析アプリを一緒に作ってください。意気込みを短くお願いします！")
-                
-                st.write("---")
-                st.write("🤖 Geminiからの返答:")
-                st.info(response.text)
-                st.balloons()
+            with st.spinner("通信中..."):
+                try:
+                    # モデルの初期化
+                    model = GenerativeModel("gemini-1.5-flash")
+                    # シンプルな生成を試行
+                    response = model.generate_content("こんにちは")
+                    st.success("🎉 Geminiとの通信に成功しました！")
+                    st.write(response.text)
+                    st.balloons()
+                except Exception as inner_e:
+                    st.error(f"⚠️ 認証後の呼び出しで失敗しました。権限またはAPI有効化の問題です: {inner_e}")
+                    
     except Exception as e:
-        st.error(f"❌ エラーが発生しました: {e}")
+        st.error(f"❌ 根本的なエラー: {e}")
 else:
-    st.error("❌ Secretsに 'gcp_json_raw' が設定されていません。SettingsのSecretsを確認してください。")
+    st.error("Secretsの設定が見つかりません。")
