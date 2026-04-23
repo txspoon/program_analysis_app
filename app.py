@@ -12,7 +12,7 @@ if "gcp_json_raw" in st.secrets:
         creds = service_account.Credentials.from_service_account_info(creds_dict)
         
         # リージョンを us-central1 に変更してテスト
-        vertexai.init(project=creds_dict["project_id"], location="us-central1", credentials=creds)
+        vertexai.init(project=creds_dict["project_id"], location="asia-central1", credentials=creds)
         
         st.success(f"✅ プロジェクト '{creds_dict['project_id']}' への認証は成功しました")
         
